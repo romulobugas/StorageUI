@@ -4,7 +4,7 @@
 
 @using StorageUI.Services
 @using Microsoft.AspNetCore.WebUtilities
-@inject IAuthenticationService AuthenticationService
+@inject IAppAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
 
 <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
@@ -46,6 +46,7 @@
             loginFailed = true;
         }
     }
+
 
     private class LoginModel
     {
