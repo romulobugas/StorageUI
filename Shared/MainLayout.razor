@@ -1,5 +1,9 @@
-﻿@attribute [Authorize]
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
 
 @inherits LayoutComponentBase
 
@@ -12,7 +16,11 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            @if (currentUser?.Identity?.IsAuthenticated ?? false)
+            {
+                <strong>@currentUser.Identity.Name</strong>
+            <button @onclick="Logout">Sair</button>
+            }
         </div>
 
         <article class="content px-4">
@@ -21,3 +29,23 @@
     </main>
 </div>
 
+@code {
+    private ClaimsPrincipal currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        currentUser = authState.User;
+    }
+
+    private async Task Logout()
+    {
+        // Se estiver usando um serviço de autenticação personalizado com CustomAuthenticationStateProvider
+        if (AuthenticationStateProvider is CustomAuthenticationStateProvider customAuthProvider)
+        {
+            customAuthProvider.MarkUserAsLoggedOut();
+            NavigationManager.NavigateTo("/", forceLoad: true); // Ajuste o caminho conforme necessário
+        }
+    }
+
+}
